@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QKeyEvent>  
 
 class RobotController;
 class RobotGridWidget;
@@ -32,5 +33,5 @@ private:
     RobotController* controller = nullptr;
 
 protected:
-    void keyPressEvent(QKeyEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;  // ✅ THIS IS CORRECT
 };

@@ -69,9 +69,7 @@ void RobotController::saveHistory() {
         "Robot Files (*.robot)"
     );
 
-    if (filePath.isEmpty()) {
-        return;
-    }
+    if (filePath.isEmpty()) return;
 
     model->saveToFile(filePath.toStdString());
     view->setStatusText("Saved " + QFileInfo(filePath).fileName());
@@ -85,9 +83,7 @@ void RobotController::loadHistory() {
         "Robot Files (*.robot)"
     );
 
-    if (filePath.isEmpty()) {
-        return;
-    }
+    if (filePath.isEmpty()) return;
 
     model->loadFromFile(filePath.toStdString());
     refreshView();
@@ -95,22 +91,23 @@ void RobotController::loadHistory() {
 }
 
 bool RobotController::handleKeyPress(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Up) {
+
+    if (event->key() == Qt::Key_W) {
         moveUp();
         return true;
     }
 
-    if (event->key() == Qt::Key_Down) {
+    if (event->key() == Qt::Key_S) {
         moveDown();
         return true;
     }
 
-    if (event->key() == Qt::Key_Left) {
+    if (event->key() == Qt::Key_A) {
         moveLeft();
         return true;
     }
 
-    if (event->key() == Qt::Key_Right) {
+    if (event->key() == Qt::Key_D) {
         moveRight();
         return true;
     }

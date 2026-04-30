@@ -38,4 +38,7 @@ private:
     int y = 2;
     int currentHistoryIndex = 0;
     std::vector<Point2D> history = {{2, 2}};
+
+    // ✅ ADD THIS LINE
+    int moveCount = 0;
 };

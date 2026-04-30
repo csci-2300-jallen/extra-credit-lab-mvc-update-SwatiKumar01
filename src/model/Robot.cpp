@@ -112,11 +112,19 @@ void Robot::moveTo(int newX, int newY) {
         return;
     }
 
-    x = newX;
-    y = newY;
+    // ✅ ADD THIS LOGIC
+    moveCount++;
+
+    int step = (moveCount >= 10) ? 2 : 1;
+
+    int dx = newX - x;
+    int dy = newY - y;
+
+    x += dx * step;
+    y += dy * step;
+
     recordPosition();
 }
-
 void Robot::recordPosition() {
     if (canRedo()) {
         history.erase(history.begin() + currentHistoryIndex + 1, history.end());
