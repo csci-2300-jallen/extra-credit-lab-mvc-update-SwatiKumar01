@@ -1,97 +1,68 @@
 #include "view/RobotWindow.h"
-
 #include "controller/RobotController.h"
 #include "view/RobotGridWidget.h"
 
-#include <QHBoxLayout>
 #include <QKeyEvent>
-#include <QLabel>
-#include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QPushButton>
+#include <QLabel>
 
-RobotWindow::RobotWindow() {
-    setWindowTitle("Robot History Serialization");
-
-    // This lets the window receive keyboard input.
-    setFocusPolicy(Qt::StrongFocus);
-    resize(360, 430);
+RobotWindow::RobotWindow()
+    : QMainWindow(nullptr) {
 
     QWidget* central = new QWidget(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout(central);
+    setCentralWidget(central);
+
+    QVBoxLayout* layout = new QVBoxLayout(central);
 
     grid = new RobotGridWidget(this);
-    QLabel* hint = new QLabel("Use arrow keys to move the robot", this);
-    hint->setAlignment(Qt::AlignCenter);
+    layout->addWidget(grid);
 
-    QHBoxLayout* historyLayout = new QHBoxLayout();
-    undoButton = new QPushButton("UNDO", this);
-    redoButton = new QPushButton("REDO", this);
-    undoButton->setFocusPolicy(Qt::NoFocus);
-    redoButton->setFocusPolicy(Qt::NoFocus);
-    historyLayout->addWidget(undoButton);
-    historyLayout->addWidget(redoButton);
+    statusLabel = new QLabel("Robot Ready", this);
+    layout->addWidget(statusLabel);
 
-    QHBoxLayout* fileLayout = new QHBoxLayout();
-    saveButton = new QPushButton("Save History", this);
-    loadButton = new QPushButton("Load History", this);
-    saveButton->setFocusPolicy(Qt::NoFocus);
-    loadButton->setFocusPolicy(Qt::NoFocus);
-    fileLayout->addWidget(saveButton);
-    fileLayout->addWidget(loadButton);
+    undoButton = new QPushButton("Undo", this);
+    redoButton = new QPushButton("Redo", this);
+    saveButton = new QPushButton("Save", this);
+    loadButton = new QPushButton("Load", this);
 
-    statusLabel = new QLabel("", this);
-    statusLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(undoButton);
+    layout->addWidget(redoButton);
+    layout->addWidget(saveButton);
+    layout->addWidget(loadButton);
+}
 
-    mainLayout->addWidget(hint);
-    mainLayout->addWidget(grid, 0, Qt::AlignCenter);
-    mainLayout->addLayout(historyLayout);
-    mainLayout->addLayout(fileLayout);
-    mainLayout->addWidget(statusLabel);
-
-    setCentralWidget(central);
+void RobotWindow::setController(RobotController* controller) {
+    this->controller = controller;
 }
 
 void RobotWindow::setRobotPosition(int x, int y) {
-    grid->setRobotPosition(x, y);
-}
-
-void RobotWindow::setController(RobotController* newController) {
-    controller = newController;
+    if (grid) grid->setRobotPosition(x, y);
 }
 
 void RobotWindow::setUndoEnabled(bool enabled) {
-    undoButton->setEnabled(enabled);
+    if (undoButton) undoButton->setEnabled(enabled);
 }
 
 void RobotWindow::setRedoEnabled(bool enabled) {
-    redoButton->setEnabled(enabled);
+    if (redoButton) redoButton->setEnabled(enabled);
 }
 
 void RobotWindow::setStatusText(const QString& text) {
-    statusLabel->setText(text);
+    if (statusLabel) statusLabel->setText(text);
 }
 
-QPushButton* RobotWindow::getUndoButton() const {
-    return undoButton;
-}
-
-QPushButton* RobotWindow::getRedoButton() const {
-    return redoButton;
-}
-
-QPushButton* RobotWindow::getSaveButton() const {
-    return saveButton;
-}
-
-QPushButton* RobotWindow::getLoadButton() const {
-    return loadButton;
-}
+QPushButton* RobotWindow::getUndoButton() const { return undoButton; }
+QPushButton* RobotWindow::getRedoButton() const { return redoButton; }
+QPushButton* RobotWindow::getSaveButton() const { return saveButton; }
+QPushButton* RobotWindow::getLoadButton() const { return loadButton; }
 
 void RobotWindow::keyPressEvent(QKeyEvent* event) {
-    if (controller != nullptr && controller->handleKeyPress(event)) {
-        return;
-    }
+    if (!controller) return;
 
-    QMainWindow::keyPressEvent(event);
+    if (event->key() == Qt::Key_W) controller->moveUp();
+    else if (event->key() == Qt::Key_S) controller->moveDown();
+    else if (event->key() == Qt::Key_A) controller->moveLeft();
+    else if (event->key() == Qt::Key_D) controller->moveRight();
 }
